@@ -20,24 +20,28 @@ class Word2Vec:
         for epoch in range(self.epochs):
             cce_loss = 0
             for i, word_num in enumerate(self.text2num):
-                y, h, u = self.forward_pass(word_num)
+                cce_loss_for_word = 0
+                min_idx = max(i - self.window_size, 0)
+                max_idx = min(i + self.window_size , len(self.text2num) - 1)
 
-                # Getting indexes of words in the neighbourhood of the current word
-                min_idx = np.clip(i - self.window_size, 0, None)
-                max_idx = np.clip(i + self.window_size, None, len(self.text2num)-1)
-                idx_to_check = np.arange(min_idx, max_idx + 1)
-                idx_to_check = np.delete(idx_to_check, np.where(idx_to_check == i))
-                words_to_check = [self.text2num[idx] for idx in idx_to_check]
+                for j in range(min_idx, max_idx + 1):
+                    if i == j: continue
 
-                # Categorical cross-entropy loss
-                cce_loss += self.CCE_loss(y, words_to_check)
+                    # Doing forward pass for each pair
+                    y, h, u = self.forward_pass(word_num)
 
-                # Getting loss for back propagation
-                loss = self.loss(y, words_to_check)
-                self.back_propagation(loss, h, word_num)
+                    # Categorical cross-entropy loss
+                    cce_loss_for_word += self.CCE_loss(y.copy(), self.text2num[j])
+
+                    # Getting loss for back propagation
+                    loss = self.loss(y.copy(), self.text2num[j])
+                    self.back_propagation(loss, h, word_num)
+
+                cce_loss_for_word /= (max_idx - min_idx)
+                cce_loss += cce_loss_for_word
 
             # Slightly dividing learning rate after each 200 epochs, for better results
-            if not epoch % 200 and not epoch == 0: self.learning_rate /= 10
+            if not epoch % 100 and not epoch == 0: self.learning_rate /= 10
 
             print(f"Epoch {epoch}: loss = {cce_loss / len(self.text2num)}")
 
@@ -49,11 +53,9 @@ class Word2Vec:
         self.w1[word_num, :] = self.w1[word_num, :] - (self.learning_rate * dE_dh)
         self.w2 = self.w2 - (self.learning_rate * dE_dw2)
 
-    def loss(self, predicted, words_to_check):
-        predicted_multiplied = predicted * len(words_to_check)
-        for word in words_to_check:
-            predicted_multiplied[word] -= 1
-        return predicted_multiplied
+    def loss(self, predicted, word_num):
+        predicted[word_num] -= 1
+        return predicted
 
     def CCE_loss(self, predicted, words_to_check):
         prob = predicted[words_to_check]
