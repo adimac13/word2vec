@@ -1,6 +1,9 @@
 import string
 
 class Dataset:
+    """
+    This class takes in a text, find unique words and create suitable dictionaries
+    """
     def __init__(self, path):
         # adding '\u2019' & '\u2018' to get rid of typographic encoding
         punc = string.punctuation + '\u2019' + '\u2018'
@@ -14,6 +17,10 @@ class Dataset:
         self.text2num = list()
 
     def setup(self):
+        """
+        Setup function returns text translated into numbers based on constructed vocabulary, and two
+        dictionaries: mappings from a word to idx and from idx to word
+        """
         l = set()
         for el in self.text:
             if el not in l:
