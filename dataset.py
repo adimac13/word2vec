@@ -19,6 +19,7 @@ class Dataset:
         self.text2num = list()
         # This list stores number of certain words
         self.num_of_words = np.empty(0)
+        self.noise_distribution = None
 
     def setup(self):
         """
@@ -37,13 +38,16 @@ class Dataset:
 
         # Word frequency table with softmax applied
         self.num_of_words **= 3/4
-        self.num_of_words = np.exp(self.num_of_words)
         sum_of_prob = np.sum(self.num_of_words)
-        self.num_of_words /= sum_of_prob
+        self.noise_distribution = self.num_of_words / sum_of_prob
 
-        return self.text2num, self.word2label, self.label2word, self.num_of_words
+        return self.text2num, self.word2label, self.label2word, self.noise_distribution
 
 if __name__ == "__main__":
     pass
-    # ds = Dataset('text.txt')
+    ds = Dataset('text.txt')
+    _ = ds.setup()
+    false_values = np.random.choice(len(ds.word2label), size=5, replace=False,
+                                    p=ds.noise_distribution )
+    print(false_values)
     # ds.setup()
