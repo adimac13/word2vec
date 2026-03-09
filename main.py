@@ -61,7 +61,7 @@ class Word2Vec:
                 cce_loss_for_word /= (max_idx - min_idx)
                 cce_loss += cce_loss_for_word
 
-            # Slightly dividing learning rate after each 200 epochs, for better results
+            # Slightly dividing learning rate after each 100 epochs, for better results
             if not epoch % 100 and not epoch == 0: self.learning_rate /= 10
 
             print(f"Epoch {epoch}: loss = {cce_loss / len(self.text2num)}")
@@ -98,7 +98,7 @@ class Word2Vec:
                 bce_loss_for_word /= (max_idx - min_idx)
                 bce_loss += bce_loss_for_word
 
-            # Slightly dividing learning rate after each 200 epochs, for better results
+            # Slightly dividing learning rate after each 50 epochs, for better results
             if not epoch % 50 and not epoch == 0: self.learning_rate /= 10
 
             print(f"Epoch {epoch}: loss = {bce_loss / len(self.text2num)}")
