@@ -1,4 +1,5 @@
 import string
+import numpy as np
 
 class Dataset:
     """
@@ -14,7 +15,10 @@ class Dataset:
         self.text = clean_text
         self.word2label = {}
         self.label2word = {}
+        # This list stores the text translated to numbers using word2label
         self.text2num = list()
+        # This list stores number of certain words
+        self.num_of_words = np.empty(0)
 
     def setup(self):
         """
@@ -27,9 +31,17 @@ class Dataset:
                 l.add(el)
                 self.word2label.update({el:len(l)-1})
                 self.label2word.update({len(l)-1:el})
+                self.num_of_words = np.append(self.num_of_words,0)
+            self.num_of_words[self.word2label[el]] += 1
             self.text2num.append(self.word2label[el])
 
-        return self.text2num, self.word2label, self.label2word
+        # Word frequency table with softmax applied
+        self.num_of_words **= 3/4
+        self.num_of_words = np.exp(self.num_of_words)
+        sum_of_prob = np.sum(self.num_of_words)
+        self.num_of_words /= sum_of_prob
+
+        return self.text2num, self.word2label, self.label2word, self.num_of_words
 
 if __name__ == "__main__":
     pass

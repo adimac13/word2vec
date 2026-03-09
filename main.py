@@ -5,13 +5,15 @@ class Word2Vec:
     """
     This class is an implementation of Word2Vec model, using skip-gram algorithm to produce word-embeddings.
     """
-    def __init__(self, path, window_size = 2, word_vec_dim = 100, epochs = 400, learning_rate = 1e-1):
+    def __init__(self, path, negative_sampling = True, window_size = 2, word_vec_dim = 100, epochs = 400, learning_rate = 1e-1, neg_samples = 5):
         ds = Dataset(path)
-        self.text2num, self.word2label, self.label2word = ds.setup()
+        self.text2num, self.word2label, self.label2word, self.noise_distribution = ds.setup()
         self.window_size = window_size
         self.word_vec_dim = word_vec_dim
         self.epochs = epochs
         self.learning_rate = learning_rate
+        self.neg_samples = neg_samples
+        self.negative_sampling = negative_sampling
 
     def train(self):
         self.w1 = np.random.uniform(-0.8,0.8,(len(self.word2label), self.word_vec_dim))
