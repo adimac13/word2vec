@@ -1,0 +1,3 @@
+# Word2Vec — Skip-Gram in pure NumPy
+
+Implementation of the Word2Vec skip-gram model using only NumPy. The model supports two training modes: full softmax and negative sampling, both with manually derived gradients and SGD with learning rate decay. Preprocessing and vocabulary construction are handled in `dataset.py`, while the full training loop (forward pass, loss, backpropagation, parameter updates) lives in `main.py`. The training corpus is a short blog text (`text.txt`).
