@@ -36,7 +36,7 @@ class Dataset:
             self.num_of_words[self.word2label[el]] += 1
             self.text2num.append(self.word2label[el])
 
-        # Word frequency table with softmax applied
+        # Word frequency table
         self.num_of_words **= 3/4
         sum_of_prob = np.sum(self.num_of_words)
         self.noise_distribution = self.num_of_words / sum_of_prob
@@ -45,9 +45,3 @@ class Dataset:
 
 if __name__ == "__main__":
     pass
-    ds = Dataset('text.txt')
-    _ = ds.setup()
-    false_values = np.random.choice(len(ds.word2label), size=5, replace=False,
-                                    p=ds.noise_distribution )
-    print(false_values)
-    # ds.setup()

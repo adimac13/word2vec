@@ -9,15 +9,10 @@ def timer_wrapper(func):
     """
     def wrapper(*args, **kwargs):
         start_time = time.time()
-
         result = func(*args, **kwargs)
-
         stop_time = time.time()
-
         print(f"Execution time for {func.__name__}: {stop_time - start_time}")
-
         return result
-
     return wrapper
 
 class Word2Vec:
@@ -49,10 +44,12 @@ class Word2Vec:
                 cce_loss_for_word = 0
                 min_idx = max(i - self.window_size, 0)
                 max_idx = min(i + self.window_size , len(self.text2num) - 1)
-                y, h, u = self.forward_pass(word_num)
 
                 for j in range(min_idx, max_idx + 1):
                     if i == j: continue
+
+                    # Doing forward pass for each pair, because the values change after each loop
+                    y, h, u = self.forward_pass(word_num)
 
                     # Categorical cross-entropy loss
                     cce_loss_for_word += self.CCE_loss(y.copy(), self.text2num[j])
@@ -188,7 +185,7 @@ class Word2Vec:
 if __name__ == "__main__":
     word2vec = Word2Vec('text.txt')
 
-    word2vec.train_with_negative_sampling()
+    # word2vec.train_with_negative_sampling()
     word2vec.train_without_negative_sampling()
 
-    # word2vec.cosine_similarity()
+    word2vec.cosine_similarity()
